@@ -20,7 +20,7 @@ Product.init(
       allowNull: false
     },
     price: {
-      type: DataTypesTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false
     },
     stock: {
