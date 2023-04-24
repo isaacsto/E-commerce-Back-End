@@ -60,14 +60,6 @@ router.get('/:id', (req, res) => {
 
 // create new product
 router.post('/', (req, res) => {
-  /* req.body should look like this...
-    {
-      product_name: "Basketball",
-      price: 200.00,
-      stock: 3,
-      tagIds: [1, 2, 3, 4]
-    }
-  */
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -97,6 +89,7 @@ router.put('/:id', (req, res) => {
     where: {
       id: req.params.id,
     },
+    returning: true,
   })
     .then((product) => {
       // find all associated tags from ProductTag
@@ -114,7 +107,6 @@ router.put('/:id', (req, res) => {
             tag_id,
           };
         });
-      // figure out which ones to remove
       const productTagsToRemove = productTags
         .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
         .map(({ id }) => id);
@@ -133,7 +125,22 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+  Product.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(numRowsDeleted => {
+    if (numRowsDeleted === 0) {
+      res.status(404).json({ message: 'Product not found' });
+    } else {
+      res.status(204).end();
+    }
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json({ message: 'Internal server error' });
+  });
 });
 
 module.exports = router;
