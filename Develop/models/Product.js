@@ -44,7 +44,7 @@ Product.init(
     timestamps: false,
     freezeTableName: true,
     underscored: true,
-    modelName: 'product_tags',
+    modelName: 'product',
   }
 );
 
